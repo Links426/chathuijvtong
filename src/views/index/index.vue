@@ -1,153 +1,171 @@
 <template>
-    <a-layout style="height: 100vh">
-        <a-layout-header
-            h-60px
+    <div class="index-background">
+        <div
+            mx-auto
+            max-w-62.4996rem
+            py-1.1256rem
+            px-0.75rem
+            h-full
             flex
-            items-center
-            px-24px
+            flex-col
             justify-between
-            class="header-shadow"
-            ><div flex-center>
-                <img src="@/assets/img/answer.png" w-20px h-28px mr-12px />
-                <span>Mechanical Pro</span>
-            </div>
-            <div>
-                <a-button @click="changeColor">换色黑</a-button>
-                <a-button @click="changeColor1">换色亮</a-button>
-            </div>
-        </a-layout-header>
-        <a-layout>
-            <a-layout-sider
-                breakpoint="lg"
-                :width="220"
-                collapsible
-                :collapsed="collapsed"
-                @collapse="onCollapse"
-            >
-                <div />
-                <a-menu
-                    :defaultOpenKeys="router.currentRoute.value.meta.openKeys"
-                    :defaultSelectedKeys="
-                        router.currentRoute.value.meta.selectKeys
-                    "
-                    @menu-item-click="To"
+        >
+            <div class="index-scroll">
+                <div class="text-#8280FF font-bold text-1.1256rem">
+                    Chat-HuiJutong 2.0
+                </div>
+                <div
+                    v-for="message in messageList"
+                    :key="message.id"
+                    mb-1.1256rem
                 >
-                    <a-sub-menu key="0">
-                        <template #icon><icon-apps></icon-apps></template>
-                        <template #title>仪表台</template>
-                        <a-menu-item key="0_0">工作台</a-menu-item>
-                    </a-sub-menu>
-                    <a-sub-menu key="1">
-                        <template #icon><icon-apps></icon-apps></template>
-                        <template #title>数据可视化</template>
-                        <a-menu-item key="1_0">分析页</a-menu-item>
-                        <a-menu-item key="1_1">多维数据分析</a-menu-item>
-                    </a-sub-menu>
-                    <a-sub-menu key="2">
-                        <template #icon><icon-apps></icon-apps></template>
-                        <template #title>个人中心</template>
-                        <a-menu-item key="2_0">用户信息</a-menu-item>
-                        <a-menu-item key="2_1">用户设置</a-menu-item>
-                    </a-sub-menu>
-                </a-menu>
-            </a-layout-sider>
-            <a-layout-content class="w-full p-20px content-bg">
-                <a-breadcrumb :routes="routesList" mb-16px>
-                    <template #item-render="{ route, paths }">
-                        <a-link @click="toBrumbPage(paths)">{{
-                            route.meta.label
-                        }}</a-link>
-                    </template>
-                </a-breadcrumb>
-                <router-view v-slot="{ Component }">
-                    <transition name="fade" mode="out-in">
-                        <keep-alive>
-                            <component :is="Component" />
-                        </keep-alive>
-                    </transition>
-                </router-view>
-            </a-layout-content>
-        </a-layout>
-    </a-layout>
+                    <div
+                        :class="
+                            message.type === 'USER' ? 'index-message-right' : ''
+                        "
+                    >
+                        <div
+                            class="text-#999999 text-0.75rem mb-0.3756rem"
+                            v-if="message.type === 'AI'"
+                        >
+                            Presented By Chat-HuiJutong 2.0
+                        </div>
+                        <div flex>
+                            <div
+                                class="index-message"
+                                :class="
+                                    message.type === 'USER'
+                                        ? 'index-message-user'
+                                        : 'index-message-ai'
+                                "
+                            >
+                                {{ message.value }}
+                            </div>
+                        </div>
+
+                        <div class="text-#bbace8 text-0.75rem mt-0.3756rem">
+                            {{ message.time }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div flex flex-col items-center>
+                <div w-full class="index-input">
+                    <div flex>
+                        <textarea
+                            v-model="text"
+                            @input="autoHeight"
+                            class="w-94% b-0"
+                            :maxlength="1000"
+                        >
+                        </textarea>
+                        <div
+                            class="w-6% text-right cursor-pointer"
+                            @click="sendMessage"
+                        >
+                            发送
+                        </div>
+                    </div>
+                    <div class="mt-0.3756rem text-#5B5B5B">
+                        {{ text.length }} / 4000
+                    </div>
+                </div>
+                <div class="text-0.8748rem mt-0.9996rem text-#C2C2C2">
+                    Copyright @ 2022-2023 荟聚通All Rights Reserved
+                </div>
+            </div>
+        </div>
+    </div>
 </template>
 <script setup lang="ts">
-const router = useRouter()
+const messageList = reactive([
+    { id: 0, time: '05/28-11:30', value: '你好', type: 'USER' },
+    { id: 1, time: '05.28-11:30', value: '你好', type: 'AI' },
+])
+const text = ref('')
 
-const collapsed = ref(false)
-
-const routesList: any = ref([])
-const onCollapse = (val: boolean) => {
-    collapsed.value = val
+const autoHeight = () => {
+    const textareaVal = document.querySelector('textarea') as HTMLElement
+    textareaVal.style.height = 'auto'
+    textareaVal.style.height = textareaVal.scrollHeight + 'px'
 }
-
-const To = (key: string) => {
-    if (key === '0_0') {
-        router.push('/main')
-    } else if (key === '1_0') {
-        router.push('/data/analyse')
-    } else if (key === '2_0') {
-        router.push('/personal/info')
-    } else if (key === '2_1') {
-        router.push('/personal/setting')
+const sendMessage = () => {
+    if (text.value) {
+        messageList.push({
+            id: messageList.length,
+            time: '05/28-11:30',
+            value: text.value,
+            type: 'USER',
+        })
+        text.value = ''
     }
-}
-
-const useKeys = ['path', 'meta']
-onBeforeRouteUpdate((to: any) => {
-    const newArr: any = []
-    to.matched.forEach(
-        (item: { [s: string]: unknown } | ArrayLike<unknown>) => {
-            const list = Object.entries(item).filter(([key]) =>
-                useKeys.includes(key)
-            )
-            const newItem = Object.fromEntries(list)
-            newArr.push(newItem)
-        }
-    )
-    routesList.value = newArr
-})
-
-const toBrumbPage = (paths: string | any[]) => {
-    router.push('/' + paths[paths.length - 1])
-}
-
-onMounted(() => {
-    const newArr: any = []
-    router.currentRoute.value.matched.forEach((item) => {
-        const list = Object.entries(item).filter(([key]) =>
-            useKeys.includes(key)
-        )
-        const newItem = Object.fromEntries(list)
-        newArr.push(newItem)
+    nextTick(() => {
+        autoHeight()
     })
-    routesList.value = newArr
-})
-
-const changeColor = () => {
-    document.body.setAttribute('arco-theme', 'dark')
-}
-const changeColor1 = () => {
-    document.body.setAttribute('arco-theme', 'light')
 }
 </script>
 
 <style scoped>
-.header-shadow {
-    z-index: 15;
-    background-color: var(--color-bg-2);
-    color: var(--color-neutral-10);
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+:deep(.arco-textarea-wrapper) {
+    border-radius: 0.5004rem;
 }
-.content-bg {
-    background-color: var(--color-neutral-1);
+.index-message-right {
+    display: flex;
+    align-items: flex-end;
+    flex-direction: column;
 }
-.fade-enter-active,
-.fade-leave-active {
-    transition: opacity 0.3s ease;
+.index-background {
+    height: 100vh;
+    background: linear-gradient(
+        135deg,
+        #f0e7f9 0%,
+        #f4f0ff 36%,
+        #fff5fb 57%,
+        #ecdedf 100%
+    );
+}
+.index-logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+
+    color: rgba(130, 128, 255, 0.71);
+}
+.index-alert {
+    font-size: 0.8748rem;
+    font-weight: normal;
+    color: rgba(0, 0, 0, 0.24);
+}
+.index-input {
+    min-height: 5.6256rem;
+    width: 100%;
+    padding: 0.9996rem;
+    margin-bottom: 0.75rem;
+    background: #ffffff;
+    box-shadow: 0rem 0.2496rem 0.6252rem 0rem rgba(0, 0, 0, 0.06);
+    border: 0;
+    border-radius: 0.6876rem;
 }
 
-.fade-enter-from,
-.fade-leave-to {
-    opacity: 0;
+.index-message-user {
+    color: #fff;
+    background: #bbace8;
+}
+.index-message-ai {
+    color: #24272d;
+    background: #ffffff;
+}
+.index-message {
+    padding: 0.8748rem;
+    border-radius: 0.75rem;
+    box-shadow: 0rem 0.2496rem 0.6252rem 0rem rgba(0, 0, 0, 0.06);
+}
+
+.index-scroll {
+    overflow: scroll;
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none;
+}
+.index-scroll::-webkit-scrollbar {
+    display: none;
 }
 </style>

@@ -33,6 +33,7 @@ declare module '@vue/runtime-core' {
     AStatistic: typeof import('@arco-design/web-vue')['Statistic']
     ASubMenu: typeof import('@arco-design/web-vue')['SubMenu']
     ATable: typeof import('@arco-design/web-vue')['Table']
+    ATextarea: typeof import('@arco-design/web-vue')['Textarea']
     Charts: typeof import('./src/components/charts/index.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     MyEcharts: typeof import('./src/components/charts/myEcharts.vue')['default']
