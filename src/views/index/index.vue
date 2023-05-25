@@ -101,6 +101,8 @@ const sendMessage = () => {
     }
     nextTick(() => {
         autoHeight()
+        document.querySelector('.index-scroll')!.scrollTop =
+            document.querySelector('.index-scroll')!.scrollHeight
     })
 }
 </script>
